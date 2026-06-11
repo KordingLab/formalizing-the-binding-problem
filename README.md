@@ -99,7 +99,7 @@ export VG_IMG_ROOT=/path/to/visual_genome
 ```
 
 
-## Models, Activations, And Probes
+## Models, Activations, and Probes
 
 Backbones, activations, and probes are configured in `src/cfgs/config.yaml`.
 
