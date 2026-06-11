@@ -1,0 +1,14 @@
+# dataset/vgtopattr.yaml
+name: vgtopattr
+
+image_size: 224
+seed: 0
+
+data_dir: ${oc.env:VG_DATA_DIR,data/datasets/visual_genome}
+img_root: ${oc.env:VG_IMG_ROOT,${dataset.data_dir}}
+
+# Metadata folder suffix: deprecated/meta_filtered_topattr_${metadata_split}
+metadata_split: coco # coco or top50
+
+num_train_samples: 10000
+num_test_samples: 2000

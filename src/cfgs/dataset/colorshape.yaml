@@ -1,0 +1,29 @@
+# dataset/colorshape.yaml
+name: colorshape
+
+n_colors: 7
+n_shapes: 7
+image_size: 256
+obj_size: 16
+distribution_mode: uniform
+non_overlapping: true
+seed: 0
+max_objects: 16
+
+# Split mode:
+# - independent: original behavior (each split sampled independently by seed)
+# - f_disjoint_hash: train/val and test use disjoint F-support via deterministic hash buckets
+split_mode: f_disjoint_hash
+exclude_all_ones_f: false
+f_split_hash_mod: 10
+f_split_test_buckets: [0, 1]
+f_split_salt: colorshape_fsplit_v1
+f_split_max_attempt_factor: 200
+
+num_train_samples: 49000
+num_test_samples: 9800
+
+# Optional dataset export controls
+save_dataset: false
+save_image_metadata: false
+save_if_missing_only: false

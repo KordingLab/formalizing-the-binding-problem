@@ -1,0 +1,24 @@
+# dataset/clevr.yaml
+# Original pre-rendered CLEVR-style 6-object reader.
+name: clevr
+
+shapes: ["cube", "sphere", "cylinder"]
+colors: ["blue", "red", "purple", "cyan", "gray", "brown", "green", "yellow"]
+materials: ["rubber", "metal"]
+sizes: ["small", "large"]
+
+image_size: 224
+max_objects: 6
+distribution_mode: natural
+seed: 0
+
+# Path containing images_6obj/ and scenes_6obj/. If your data is split across
+# legacy sibling roots, the loader also checks ${data_dir}2/ for sample ids
+# >= second_root_start.
+data_dir: ${oc.env:CLEVR_DATA_DIR,data/datasets/clevr}
+num_total_samples: 50000
+second_root_start: 25000
+
+# Trainer uses 80/20 of num_train_samples for train/val.
+num_train_samples: 40000
+num_test_samples: 5000

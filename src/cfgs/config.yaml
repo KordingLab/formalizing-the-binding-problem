@@ -1,0 +1,70 @@
+defaults:
+  - dataset: balancedcolorshape
+  - _self_
+
+seed: 42
+project_root: ${oc.env:BINDING_PROJECT_ROOT,${hydra:runtime.cwd}}
+device: cuda:0
+
+probes:
+  probe_F:
+    type: dnn # linear, quadratic_concat
+    # Attention probes: false reymoves the gt-conditioned query offset.
+    # Non-attention probes: false removes gt labels from the readout input.
+    use_conditioned_query: true
+    dnn_hidden_dim: 2048
+    dnn_num_layers: 4
+    dnn_dropout: 0.0
+    rank: 16
+  probe_Y:
+    type: dnn # linear, quadratic_concat, quadratic_concat_reuse
+    # Attention probes: false removes the gt-conditioned query offset.
+    # Non-attention probes: false removes gt labels from the readout input.
+    use_conditioned_query: true
+    dnn_hidden_dim: 2048
+    dnn_num_layers: 4
+    dnn_dropout: 0.0
+    rank: 16
+
+trainer:
+  # Toggle which probes to train/evaluate.
+  # If one is false, that probe is skipped entirely and binding metrics are omitted.
+  train_probe_Y: true
+  train_probe_F: false
+  batch_size: 512
+  grad_accum_steps: 2
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  # Frozen-backbone activations are always cached in memory before probe training.
+  # generate: run the backbone once and save all CLS+spatial token activations.
+  # load: load saved token activations and select model.output_mode in memory.
+  activation_cache_mode: generate
+  activation_cache_dir: ${project_root}/data/cache/activations
+  pin_memory: true
+  # Save one combined end-of-training plot for loss, accuracy, binding info, and binding ratio.
+  plot_training_curves: true
+  training_curves_path: null  # null -> ${output_dir}/training_curves.png
+  max_epoch: 40
+  num_workers: 0
+  init_checkpoint_path: null
+  # If true, export probe_Y/probe_F weights to probe_weights_path,
+  # but only when that file does not already exist.
+  save_probe_weights_if_missing: true
+  # Optional explicit path for standalone probe export.
+  # If null, defaults to ${output_dir}/probe_weights.pth
+  probe_weights_path: null
+  scheduler:
+    step_size: 8
+    gamma: 0.2
+  
+  
+model:
+  name: facebook/dinov2-large # facebook/dinov2-large or openai/clip-vit-large-patch14 or openai/clip-vit-large-patch14-336
+  short_name: dinov2-large  # dinov2-large or clip-vit-large-patch14 or clip-vit-large-patch14-336
+  load_from: "huggingface" # "huggingface" or "timm"
+  output_mode: "cls" # "cls", "mean_spatial", "all", or "cls_mean"
+
+output_dir: ${project_root}/data/outputs/${dataset.name}/${model.short_name}_${model.output_mode}_Y${probes.probe_Y.type}_F${probes.probe_F.type}_act${trainer.activation_cache_mode}_${oc.select:dataset.n_shapes,na}shapes_${oc.select:dataset.n_colors,na}colors_${now:%Y-%m-%d_%H-%M-%S}/
+hydra:
+  run:
+    dir: ${output_dir}

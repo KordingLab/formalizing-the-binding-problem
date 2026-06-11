@@ -1,0 +1,94 @@
+# dataset/occlusionclevr.yaml
+# OcclusionClevr dataset generated with Blender (uniform over Y)
+name: occlusionclevr
+
+# Local clone of https://github.com/facebookresearch/clevr-dataset-gen
+clevr_gen_dir: ${oc.env:CLEVR_GEN_DIR,clevr-dataset-gen}
+
+# Blender binary ("blender" if on PATH)
+blender_path: ${oc.env:BLENDER_PATH,blender}
+
+# Cache directory for generated images + metadata
+gen_root: ${oc.env:OCCLUSION_CLEVR_GEN_ROOT,${oc.env:CLEVR_GEN_ROOT,data/generated/occlusionclevr}}
+
+# Feature space (choose first N from CLEVR canonical lists unless you explicitly set colors/shapes)
+# CLEVR colors: [gray, red, blue, green, brown, purple, cyan, yellow]
+# CLEVR shapes: [cube, sphere, cylinder]
+n_colors: 4
+n_shapes: 3
+# colors: [gray, red, blue, green]
+# shapes: [cube, sphere]
+
+# Image size returned by the Dataset (and default render size unless overridden)
+image_size: 336
+
+# Render resolution inside Blender (can be higher than image_size for clarity)
+render_size: 336
+
+# Blender rendering options
+render_num_samples: 64
+
+# Set to 1 to enable Cycles GPU rendering (recommended)
+use_gpu: 1
+
+# Cycles backend (CUDA-only)
+gpu_backend: CUDA
+
+# Force using only one CUDA GPU to avoid multi-GPU rendering overhead.
+# - Preferred: set gpu_device_index to pick a specific CUDA device among those visible to Blender.
+# - Alternative: set gpu_device_name to match by substring (overrides index).
+# gpu_device_index: 0
+# gpu_device_name: RTX A6000
+
+# True multi-GPU data-parallel rendering (recommended if you have multiple GPUs):
+# This launches multiple Blender processes, each pinned to one GPU via CUDA_VISIBLE_DEVICES,
+# and shards spec.jsonl across workers. If gpu_device_indices has >=2 entries, it overrides
+# gpu_device_index and uses all listed GPUs.
+# gpu_device_indices: [0, 1]
+# render_workers: 2  # optional cap; defaults to len(gpu_device_indices)
+min_dist: 0.25
+margin: 0.4
+max_retries: 50
+key_light_jitter: 1.0
+fill_light_jitter: 1.0
+back_light_jitter: 1.0
+camera_jitter: 0.5
+
+# If Blender occasionally fails to write some frames (e.g., placement failures),
+# the dataset can attempt to re-render only the missing images using spec.jsonl.
+repair_missing: true
+repair_missing_passes: 5
+
+# If true, NEVER generate new data. Only load existing caches.
+# Useful for training runs where you want to guarantee no Blender jobs are launched.
+use_cache_only: false
+
+# If true, render only files missing under images/ for the current spec.
+# Existing image files are left untouched.
+render_missing_only: true
+
+# What to do if images are still missing after repair:
+# - 'raise' (default): fail fast during dataset init with a helpful error.
+# - 'drop': filter missing samples out of (image_filenames, Y, F, H) so training can continue.
+missing_policy: raise
+
+# Show tqdm progress bars while sampling and rendering
+show_tqdm: true
+
+# Optional defaults for object attributes not modeled by Y
+default_size: small
+default_material: rubber
+
+# Used for the support of Y when sampling uniformly over |Y|<=max_objects.
+max_objects: 12
+
+# Dataset seed (controls sampling/shuffling of scenes)
+seed: 123223
+
+# How many samples to draw from the split for training/testing.
+# (These are used by Trainer to size the DataLoaders.)
+num_train_samples: 10000
+num_test_samples: 2000
+
+camera_elevation: 3.2
+camera_pitch_deg: 32

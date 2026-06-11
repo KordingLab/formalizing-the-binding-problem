@@ -1,0 +1,37 @@
+# dataset/balancedcolorshape.yaml
+name: balancedcolorshape
+
+n_colors: 8
+n_shapes: 8
+image_size: 256
+obj_size: 16
+distribution_mode: uniform
+non_overlapping: true
+seed: 0
+
+# Each sample chooses 6 colors and 6 shapes, then 18 color-shape objects
+# from the resulting 6x6 grid, conditioned on covering all selected features.
+candidate_colors_per_sample: 6
+candidate_shapes_per_sample: 6
+num_objects: 18
+max_objects: 18
+object_sample_max_attempts: 1000
+
+# Exact deterministic partition of the 784 possible 6-color/6-shape F codes:
+# train 522, val 131, test 131.
+split_mode: f_ranked_three_way
+exclude_all_ones_f: false
+f_split_salt: balancedcolorshape_fsplit_v1
+f_split_train_count: 522
+f_split_val_count: 131
+f_split_test_count: 131
+f_split_max_attempt_factor: 200
+
+# Existing trainer logic uses 80/20 of num_train_samples for train/val.
+num_train_samples: 49000
+num_test_samples: 9800
+
+# Optional dataset export controls
+save_dataset: false
+save_image_metadata: false
+save_if_missing_only: true
