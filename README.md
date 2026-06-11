@@ -1,6 +1,8 @@
-# Formalizing the Binding Problem
+# Formalizing the Binding Problem (ICML 2026)
 
-Code for probing feature-binding information in frozen vision backbones. The training pipeline builds a binding dataset, caches frozen model activations, trains one or more probes, and reports probe loss, accuracy, binding information, and binding ratio.
+[![Paper](https://img.shields.io/badge/Paper-arXiv-8A2BE2)](https://arxiv.org/abs/2606.03976)
+
+We probe feature-binding information in frozen vision backbones. The training pipeline builds a binding dataset, caches frozen model activations, trains one or more probes, and reports probe loss, accuracy, binding information, and binding ratio.
 
 ## Setup
 
