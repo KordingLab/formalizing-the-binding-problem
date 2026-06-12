@@ -42,7 +42,7 @@ src/
 
 ### OcclusionClevr
 
-`occlusionclevr` generates or loads CLEVR-style images using Blender and a local clone of `facebookresearch/clevr-dataset-gen`:
+`occlusionclevr` generates or loads CLEVR-style images using Blender and a local clone of `facebookresearch/clevr-dataset-gen` (see this repo for instructions on installing Blender):
 
 ```bash
 git clone https://github.com/facebookresearch/clevr-dataset-gen.git
