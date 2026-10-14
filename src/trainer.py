@@ -218,6 +218,7 @@ class Trainer:
 
             total_num = 0
             self.optimizer.zero_grad(set_to_none=True)
+            num_batches = len(self.train_dataloader)
 
             for step_idx, (inputs, Y, F, _) in enumerate(tqdm(self.train_dataloader)):
                 outputs = self.train_loop(
@@ -231,11 +232,14 @@ class Trainer:
                     losses.append(outputs["lossY"])
                 if self.train_probe_F:
                     losses.append(outputs["lossF"])
-                # Scale the loss so that accumulated gradients match the non-accumulated case.
-                loss = sum(losses) / float(grad_accum_steps)
+                # Average minibatch losses within the actual accumulation group,
+                # including a final group with fewer than grad_accum_steps batches.
+                group_start = (step_idx // grad_accum_steps) * grad_accum_steps
+                group_size = min(grad_accum_steps, num_batches - group_start)
+                loss = sum(losses) / float(group_size)
                 loss.backward()
 
-                do_step = ((step_idx + 1) % grad_accum_steps == 0) or ((step_idx + 1) == len(self.train_dataloader))
+                do_step = ((step_idx + 1) % grad_accum_steps == 0) or ((step_idx + 1) == num_batches)
                 if do_step:
                     self.optimizer.step()
                     self.optimizer.zero_grad(set_to_none=True)
